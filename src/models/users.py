@@ -8,7 +8,7 @@ from sqlalchemy import (
     String,
     TIMESTAMP,
 )
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, relationship
 
 from core.database import Base
 
@@ -23,3 +23,5 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_active: Mapped[bool] = Column(Boolean, default=True, nullable=False)
     is_superuser: Mapped[bool] = Column(Boolean, default=False, nullable=False)
     is_verified: Mapped[bool] = Column(Boolean, default=False, nullable=False)
+
+    tokens = relationship("Token", back_populates="owner", uselist=True)

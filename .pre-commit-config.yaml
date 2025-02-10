@@ -12,7 +12,7 @@ repos:
 
 # Линтер black
 -   repo: https://github.com/ambv/black
-    rev: 22.10.0
+    rev: 24.10.0
     hooks:
     - id: black
       language_version: python3.12

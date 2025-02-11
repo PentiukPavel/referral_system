@@ -35,4 +35,3 @@ class UserService:
             referrers = await uow.users.get_referrers_of_user(current_user)
             await uow.commit()
             return referrers
-

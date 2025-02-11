@@ -58,10 +58,11 @@ async def refer_to_user_endpoint(
             status_code=HTTPStatus.NOT_ACCEPTABLE, detail=str(e)
         )
 
+
 @v1_users_router.get(
     "/referers/",
     description="Список референтов.",
-    response_model=Optional[List[UserRead]]
+    response_model=Optional[List[UserRead]],
 )
 async def get_referrers_endpoint(
     current_user: CurrentUserDep,

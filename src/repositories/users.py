@@ -26,7 +26,9 @@ class UserRepository(AbstrsctSQLAlcchemyRepository):
         return result.scalar_one_or_none()
 
     async def refer_to_user(self, user: User, referrer: User) -> None:
-        stmt = insert(Referral).values({"referral_id": user.id, "referrer_id": referrer.id})
+        stmt = insert(Referral).values(
+            {"referral_id": user.id, "referrer_id": referrer.id}
+        )
         await self.session.execute(stmt)
 
     async def follow_up_check(self, user: User, referrer: User):

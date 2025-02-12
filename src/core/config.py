@@ -13,15 +13,9 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
 
-    # e-mail config
-    SMTP_PASSWORD: str
-    SMTP_USER: str
-    SMTP_HOST: str
-    SMTP_PORT: str
-
     # Redis config
-    REDIS_HOST: str
-    REDIS_PORT: str
+    REDIS_HOST: str | None
+    REDIS_PORT: str | None
 
     # Test Data Base config
     DB_HOST_TEST: str

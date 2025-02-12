@@ -3,11 +3,13 @@ from typing import Union
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi_cache.decorator import cache
 
 from api.v1.dependencies import CurrentUserDep, UOWDep
 import exceptions as custom_exc
-import services
 from schemes import EmailData, ErrorInfo, TokenCreate, TokenRetrieve
+import services
+
 
 v1_token_router = APIRouter(prefix="/api/v1/tokens", tags=["Tokens"])
 
@@ -53,6 +55,7 @@ async def delete_active_code_endpoint(
     description="Получить реферальный код по email реферала.",
     response_model=Union[ErrorInfo, TokenRetrieve],
 )
+@cache(expire=90)
 async def get_referral_code(uow: UOWDep, email_data: EmailData):
     try:
         return await services.TokenService().get_token_by_email(

@@ -5,8 +5,8 @@ from api.routers import v1_main_router
 
 
 app = FastAPI(
-    title="API",
-    summary="API",
+    title="Referral System",
+    summary="API для реферальной системы.",
 )
 
 app.middleware("http")(LoggingMiddleware())

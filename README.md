@@ -1,6 +1,6 @@
-# FastAPI_SQLAlchemy_template
+# Refferal System
 ## Описание
-......
+API реферальной системы.
 
 ## Для разработчиков:
 ### Пример файла с переменными среды:
@@ -21,7 +21,7 @@ pre-commit run --all-files
 
 1. Клонировать проект
 ```bash
-git clone git@github.com:PentiukPavel/.....
+git clone git@github.com:PentiukPavel/referral_system.git
 ```
 
 2. Переименовать файл .env.example и изменить содержимое на актуальные данные.

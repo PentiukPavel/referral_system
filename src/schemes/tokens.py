@@ -4,9 +4,12 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-class TokenRetrieve(BaseModel):
-    code: UUID
+class TokenCreate(BaseModel):
     expired_at: datetime
+
+
+class TokenRetrieve(TokenCreate):
+    code: UUID
 
     class Config:
         from_attributes = True

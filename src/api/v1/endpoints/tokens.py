@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from api.v1.dependencies import CurrentUserDep, UOWDep
 import exceptions as custom_exc
 import services
-from schemes import ErrorInfo, TokenRetrieve
+from schemes import ErrorInfo, TokenCreate, TokenRetrieve
 
 v1_token_router = APIRouter(prefix="/api/v1/tokens", tags=["Tokens"])
 
@@ -18,11 +18,12 @@ v1_token_router = APIRouter(prefix="/api/v1/tokens", tags=["Tokens"])
     response_model=Union[ErrorInfo, TokenRetrieve],
 )
 async def create_code_endpoint(
-    current_user: CurrentUserDep,
-    uow: UOWDep,
+    current_user: CurrentUserDep, uow: UOWDep, token_data: TokenCreate
 ):
     try:
-        token = await services.TokenService().create_token(uow, current_user)
+        token = await services.TokenService().create_token(
+            uow, current_user, token_data
+        )
         return token
     except custom_exc.TokenAlreadyExists as e:
         raise HTTPException(

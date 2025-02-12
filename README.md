@@ -1,4 +1,4 @@
-# Refferal System
+# Referral System
 ## Описание
 API реферальной системы.
 

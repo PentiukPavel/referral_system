@@ -1,2 +1,2 @@
 from core.database import Base  # noqa
-from models import User  # noqa
+from models import Referral, Token, User  # noqa

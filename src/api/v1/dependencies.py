@@ -9,6 +9,6 @@ from models import User
 from utils.unit_of_work import BaseUnitOfWork, UnitOfWork
 
 
-SessionDep = Annotated[AsyncSession, Depends(get_async_session)]
 CurrentUserDep = Annotated[Optional[User], Depends(current_user)]
+SessionDep = Annotated[AsyncSession, Depends(get_async_session)]
 UOWDep = Annotated[BaseUnitOfWork, Depends(UnitOfWork)]

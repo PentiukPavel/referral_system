@@ -6,9 +6,10 @@ from fastapi_users import (
     IntegerIDMixin,
 )
 
+from api.v1.auth.utils import get_user_db
 from core.config import settings
 from models import User
-from api.v1.auth.utils import get_user_db
+from utils.email_veryfier import email_veryfier
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
@@ -20,7 +21,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         user: User,
         request: Optional[Request] = None,
     ):
-        pass
+        await email_veryfier(user.email)
 
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None

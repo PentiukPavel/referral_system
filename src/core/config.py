@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     DB_USER_TEST: str
     DB_PASS_TEST: str
 
+    # Email Verifier config
+    VERIFIER_API_CODE: str
+    VERIFIER_URL: str
+
     model_config = SettingsConfigDict(env_file="../.env")
 
 

@@ -47,17 +47,11 @@ class Referral(Base):
 
     referral_id: Mapped[int] = Column(
         Integer,
-        ForeignKey(
-            User.id,
-            ondelete="CASCADE",
-        ),
+        ForeignKey(User.id, ondelete="CASCADE"),
         primary_key=True,
     )
     referrer_id: Mapped[int] = Column(
         Integer,
-        ForeignKey(
-            User.id,
-            ondelete="CASCADE",
-        ),
+        ForeignKey(User.id, ondelete="CASCADE"),
         primary_key=True,
     )

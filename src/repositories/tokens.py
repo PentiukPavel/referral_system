@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import delete, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import Token
+from models import Token, User
 from repositories.base import AbstrsctSQLAlcchemyRepository
 
 
@@ -29,4 +29,14 @@ class TokenRepository(AbstrsctSQLAlcchemyRepository):
 
     async def delete_token(self, token_id: int):
         stmt = delete(Token).where(Token.id == token_id)
-        result = await self.session.execute(stmt)
+        await self.session.execute(stmt)
+
+    async def get_active_token_by_email(self, email):
+        query = (
+            select(Token)
+            .join(User, Token.user_id == User.id)
+            .where(User.email == email)
+            .filter(Token.expired_at > datetime.now())
+        )
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()

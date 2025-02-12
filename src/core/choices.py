@@ -8,4 +8,5 @@ class APIMessages(StrEnum):
     REFERRED_SUCCESSFULLY = "Referred successfully."
     TOKEN_ALREADY_EXISTS = "Token already exists."
     TOKEN_DOES_NOT_EXIST = "Active token does not exist."
+    NO_ACTIVE_TOKEN = "Wrong email or active token does not exist."
     WRONG_TOKEN = "Code does not exist or expired."

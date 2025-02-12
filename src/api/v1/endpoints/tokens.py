@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from api.v1.dependencies import CurrentUserDep, UOWDep
 import exceptions as custom_exc
 import services
-from schemes import ErrorInfo, TokenCreate, TokenRetrieve
+from schemes import EmailData, ErrorInfo, TokenCreate, TokenRetrieve
 
 v1_token_router = APIRouter(prefix="/api/v1/tokens", tags=["Tokens"])
 
@@ -43,6 +43,22 @@ async def delete_active_code_endpoint(
         await services.TokenService().delete_token(uow, current_user)
         return JSONResponse(status_code=HTTPStatus.NO_CONTENT, content=None)
     except custom_exc.TokenDoesNotExist as e:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_ACCEPTABLE, detail=str(e)
+        )
+
+
+@v1_token_router.post(
+    "/get_referral_code/",
+    description="Получить реферальный код по email реферала.",
+    response_model=Union[ErrorInfo, TokenRetrieve],
+)
+async def get_referral_code(uow: UOWDep, email_data: EmailData):
+    try:
+        return await services.TokenService().get_token_by_email(
+            uow, email_data
+        )
+    except custom_exc.NoActiveToken as e:
         raise HTTPException(
             status_code=HTTPStatus.NOT_ACCEPTABLE, detail=str(e)
         )

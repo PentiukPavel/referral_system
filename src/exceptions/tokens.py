@@ -13,6 +13,12 @@ class TokenDoesNotExist(Exception):
         super().__init__(message)
 
 
+class NoActiveToken(Exception):
+    def __init__(self):
+        message = APIMessages.NO_ACTIVE_TOKEN.value
+        super().__init__(message)
+
+
 class WrongToken(Exception):
     def __init__(self):
         message = APIMessages.WRONG_TOKEN.value

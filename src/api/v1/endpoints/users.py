@@ -12,10 +12,7 @@ from api.v1.auth.auth import (
 from api.v1.dependencies import CurrentUserDep, UOWDep
 from core.choices import APIMessages
 import exceptions as custom_exc
-from schemes import (
-    UserCreate,
-    UserRead,
-)
+from schemes import UserCreate, UserRead
 import services
 
 

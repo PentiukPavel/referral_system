@@ -1,11 +1,9 @@
-from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
-from core.enums import Limit
-from exceptions import TokenAlreadyExists, TokenDoesNotExist
+from exceptions import TokenAlreadyExists, TokenDoesNotExist, NoActiveToken
 from models import User
 from utils.unit_of_work import UnitOfWork
-from schemes import TokenCreate
+from schemes import EmailData, TokenCreate
 
 
 class TokenService:
@@ -40,3 +38,14 @@ class TokenService:
 
             await uow.tokens.delete_token(token.id)
             await uow.commit()
+
+    async def get_token_by_email(self, uow: UnitOfWork, email_data: EmailData):
+        async with uow:
+            email_data = email_data.model_dump()
+            email = email_data["email"]
+            token = await uow.tokens.get_active_token_by_email(email)
+            if token is None:
+                raise NoActiveToken()
+
+            await uow.commit()
+            return token

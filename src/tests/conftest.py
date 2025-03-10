@@ -1,4 +1,5 @@
 import asyncio
+from pwdlib import PasswordHash
 
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
@@ -7,9 +8,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.pool import NullPool
 
+from api.v1.auth.auth import current_user
 from core.database import Base, get_async_session
 from core.config import DATABASE_URL_TEST
 from main import app
+from tests.factories import UserlFactory
 
 
 @pytest_asyncio.fixture(autouse=True, scope="session")
@@ -43,6 +46,27 @@ async def get_session(get_engine):
 @pytest_asyncio.fixture(scope="function")
 async def async_client(get_session):
     app.dependency_overrides[get_async_session] = lambda: get_session
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
+        yield ac
+
+
+@pytest_asyncio.fixture(scope="function")
+async def create_user(get_session):
+
+    UserlFactory._meta.sqlalchemy_session = get_session
+
+    hasher = PasswordHash.recommended()
+    hashed_password = hasher.hash("some_password")
+    user_1 = await UserlFactory(hashed_password=hashed_password)
+    return user_1
+
+
+@pytest_asyncio.fixture(scope="function")
+async def async_authorized_client(get_session, create_user):
+    app.dependency_overrides[get_async_session] = lambda: get_session
+    app.dependency_overrides[current_user] = lambda: create_user
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:

@@ -5,10 +5,9 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi_cache.decorator import cache
 
-from api.v1.dependencies import CurrentUserDep, UOWDep
+from api.v1.dependencies import CurrentUserDep, token_service_dep
 import exceptions as custom_exc
 from schemes import EmailData, ErrorInfo, TokenCreate, TokenRetrieve
-import services
 
 
 v1_token_router = APIRouter(prefix="/api/v1/tokens", tags=["Tokens"])
@@ -20,11 +19,14 @@ v1_token_router = APIRouter(prefix="/api/v1/tokens", tags=["Tokens"])
     response_model=Union[ErrorInfo, TokenRetrieve],
 )
 async def create_code_endpoint(
-    current_user: CurrentUserDep, uow: UOWDep, token_data: TokenCreate
+    current_user: CurrentUserDep,
+    token_service: token_service_dep,
+    token_data: TokenCreate,
 ):
     try:
-        token = await services.TokenService().create_token(
-            uow, current_user, token_data
+        token = await token_service.create_token(
+            current_user=current_user,
+            token_data=token_data,
         )
         return token
     except custom_exc.TokenAlreadyExists as e:
@@ -39,10 +41,10 @@ async def create_code_endpoint(
 )
 async def delete_active_code_endpoint(
     current_user: CurrentUserDep,
-    uow: UOWDep,
+    token_service: token_service_dep,
 ):
     try:
-        await services.TokenService().delete_token(uow, current_user)
+        await token_service.delete_token(current_user=current_user)
         return JSONResponse(status_code=HTTPStatus.NO_CONTENT, content=None)
     except custom_exc.TokenDoesNotExist as e:
         raise HTTPException(
@@ -56,11 +58,11 @@ async def delete_active_code_endpoint(
     response_model=Union[ErrorInfo, TokenRetrieve],
 )
 @cache(expire=90)
-async def get_referral_code(uow: UOWDep, email_data: EmailData):
+async def get_referral_code(
+    token_service: token_service_dep, email_data: EmailData
+):
     try:
-        return await services.TokenService().get_token_by_email(
-            uow, email_data
-        )
+        return await token_service.get_token_by_email(email_data=email_data)
     except custom_exc.NoActiveToken as e:
         raise HTTPException(
             status_code=HTTPStatus.NOT_ACCEPTABLE, detail=str(e)

@@ -7,10 +7,11 @@ from schemes import EmailData, TokenCreate
 
 
 class TokenService:
-    async def create_token(
-        self, uow: UnitOfWork, current_user: User, token_data: TokenCreate
-    ):
-        async with uow:
+    def __init__(self, uow: UnitOfWork):
+        self._uow = uow
+
+    async def create_token(self, current_user: User, token_data: TokenCreate):
+        async with self._uow as uow:
             token = await uow.tokens.get_active_token(current_user.id)
             if token is not None:
                 raise TokenAlreadyExists()
@@ -26,12 +27,8 @@ class TokenService:
             await uow.commit()
             return created_token
 
-    async def delete_token(
-        self,
-        uow: UnitOfWork,
-        current_user: User,
-    ):
-        async with uow:
+    async def delete_token(self, current_user: User):
+        async with self._uow as uow:
             token = await uow.tokens.get_active_token(current_user.id)
             if token is None:
                 raise TokenDoesNotExist()
@@ -39,8 +36,8 @@ class TokenService:
             await uow.tokens.delete_token(token.id)
             await uow.commit()
 
-    async def get_token_by_email(self, uow: UnitOfWork, email_data: EmailData):
-        async with uow:
+    async def get_token_by_email(self, email_data: EmailData):
+        async with self._uow as uow:
             email_data = email_data.model_dump()
             email = email_data["email"]
             token = await uow.tokens.get_active_token_by_email(email)

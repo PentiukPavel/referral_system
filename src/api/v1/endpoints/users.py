@@ -9,11 +9,10 @@ from api.v1.auth.auth import (
     auth_backend,
     fastapi_users,
 )
-from api.v1.dependencies import CurrentUserDep, UOWDep
+from api.v1.dependencies import CurrentUserDep, user_service_dep
 from core.choices import APIMessages
 import exceptions as custom_exc
 from schemes import UserCreate, UserRead
-import services
 
 
 v1_users_router = APIRouter(prefix="/api/clients", tags=["Users"])
@@ -37,11 +36,11 @@ v1_users_router.include_router(
 )
 async def refer_to_user_endpoint(
     current_user: CurrentUserDep,
-    uow: UOWDep,
+    user_service: user_service_dep,
     code: UUID,
 ):
     try:
-        await services.UserService().refer_to_user(uow, code, current_user)
+        await user_service.refer_to_user(code=code, current_user=current_user)
         return JSONResponse(
             status_code=HTTPStatus.CREATED,
             content=APIMessages.REFERRED_SUCCESSFULLY.value,
@@ -63,6 +62,6 @@ async def refer_to_user_endpoint(
 )
 async def get_referrers_endpoint(
     current_user: CurrentUserDep,
-    uow: UOWDep,
+    user_service: user_service_dep,
 ):
-    return await services.UserService().get_referrers(uow, current_user)
+    return await user_service.get_referrers(current_user=current_user)

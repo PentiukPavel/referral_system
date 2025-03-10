@@ -6,13 +6,15 @@ from utils.unit_of_work import UnitOfWork
 
 
 class UserService:
+    def __init__(self, uow: UnitOfWork):
+        self._uow = uow
+
     async def refer_to_user(
         self,
-        uow: UnitOfWork,
         code: UUID,
         current_user: User,
     ):
-        async with uow:
+        async with self._uow as uow:
             user = await uow.users.get_user_by_code(code)
             if user is None:
                 raise WrongToken()
@@ -28,10 +30,9 @@ class UserService:
 
     async def get_referrers(
         self,
-        uow: UnitOfWork,
         current_user: User,
     ):
-        async with uow:
+        async with self._uow as uow:
             referrers = await uow.users.get_referrers_of_user(current_user)
             await uow.commit()
             return referrers

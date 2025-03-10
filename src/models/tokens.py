@@ -4,6 +4,7 @@ from sqlalchemy import Column, ForeignKey, Integer, TIMESTAMP, UUID
 from sqlalchemy.orm import Mapped, relationship
 
 from core.database import Base, CommonMixin
+from schemes import TokenRetrieve
 
 
 class Token(CommonMixin, Base):
@@ -13,3 +14,9 @@ class Token(CommonMixin, Base):
         Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
     owner = relationship("User", back_populates="tokens")
+
+    def to_read_model(self) -> TokenRetrieve:
+        return TokenRetrieve(
+            expired_at=self.expired_at,
+            code=self.code,
+        )

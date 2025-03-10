@@ -14,9 +14,7 @@ class TokenRepository(AbstrsctSQLAlcchemyRepository):
     async def get_active_token(self, user_id: int):
         query = (
             select(Token)
-            .filter_by(
-                user_id=user_id,
-            )
+            .filter_by(user_id=user_id)
             .filter(Token.expired_at > datetime.now())
         )
         result = await self.session.execute(query)

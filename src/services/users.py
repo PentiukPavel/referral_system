@@ -22,10 +22,13 @@ class UserService:
             if user.id == current_user.id:
                 raise NotSelf()
 
-            if await self.uow.users.follow_up_check(
-                user=user,
-                referrer=current_user,
-            ) is not None:
+            if (
+                await self.uow.users.follow_up_check(
+                    user=user,
+                    referrer=current_user,
+                )
+                is not None
+            ):
                 raise AlreadyReferred()
 
             await self.uow.users.refer_to_user(user, current_user)

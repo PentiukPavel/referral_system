@@ -1,15 +1,15 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class TokenCreate(BaseModel):
-    expired_at: datetime
+    expired_at: datetime = Field(..., description="Срок действия")
 
 
 class TokenRetrieve(TokenCreate):
-    code: UUID
+    code: UUID = Field(..., description="Реферальный код")
 
     class Config:
         from_attributes = True
@@ -20,4 +20,4 @@ class ErrorInfo(BaseModel):
 
 
 class EmailData(BaseModel):
-    email: EmailStr
+    email: EmailStr = Field(..., description="Адрес электронной почты")

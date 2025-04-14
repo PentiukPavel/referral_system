@@ -1,3 +1,4 @@
+from typing import List
 from uuid import UUID
 
 from exceptions import AlreadyReferred, NotSelf, WrongToken
@@ -6,6 +7,10 @@ from utils.unit_of_work import UnitOfWork
 
 
 class UserService:
+    """
+    Служба для работы с пользователями.
+    """
+
     def __init__(self, uow: UnitOfWork):
         self.uow = uow
 
@@ -13,7 +18,17 @@ class UserService:
         self,
         code: UUID,
         current_user: User,
-    ):
+    ) -> None:
+        """
+        Подписка на пользователя по его реферальному коду.
+
+        :param current_user: пользователь - реферал
+        :param code: реферальный код
+        :raises WrongToken: если для реферального кода не найден владелец
+        :raises NotSelf: если реферал и есть владелей реферального кода
+        :raises AlreadyReferred: если подписка уже существует
+        """
+
         async with self.uow:
             user = await self.uow.users.get_user_by_code(code)
             if user is None:
@@ -37,7 +52,14 @@ class UserService:
     async def get_referrers(
         self,
         current_user: User,
-    ):
+    ) -> List[User]:
+        """
+        Получение списка рефералов пользователя.
+
+        :param current_user: пользователь
+        :return список рефералов пользователя:
+        """
+
         async with self.uow:
             referrers = await self.uow.users.get_referrers_of_user(
                 user=current_user,
